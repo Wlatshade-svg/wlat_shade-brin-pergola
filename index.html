@@ -10,9 +10,25 @@
   <link rel="icon" type="image/png" href="logo-icon.png" />
   <link rel="apple-touch-icon" href="logo-icon.png" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/zain-arabic-700-normal.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/zain-latin-700-normal.woff2" crossorigin />
+  <style>
+    @font-face { font-family: 'Zain'; font-style: normal; font-weight: 400; font-display: swap;
+      src: url('fonts/zain-arabic-400-normal.woff2') format('woff2');
+      unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F; }
+    @font-face { font-family: 'Zain'; font-style: normal; font-weight: 400; font-display: swap;
+      src: url('fonts/zain-latin-400-normal.woff2') format('woff2'); }
+    @font-face { font-family: 'Zain'; font-style: normal; font-weight: 700; font-display: swap;
+      src: url('fonts/zain-arabic-700-normal.woff2') format('woff2');
+      unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F; }
+    @font-face { font-family: 'Zain'; font-style: normal; font-weight: 700; font-display: swap;
+      src: url('fonts/zain-latin-700-normal.woff2') format('woff2'); }
+    @font-face { font-family: 'Zain'; font-style: normal; font-weight: 800; font-display: swap;
+      src: url('fonts/zain-arabic-800-normal.woff2') format('woff2');
+      unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F; }
+    @font-face { font-family: 'Zain'; font-style: normal; font-weight: 800; font-display: swap;
+      src: url('fonts/zain-latin-800-normal.woff2') format('woff2'); }
+  </style>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -245,12 +261,12 @@
     .psh { display: none; }
 
     @media print {
-      @page { size: A4; margin: 9mm 10mm; }
+      @page { size: A4; margin: 7mm 9mm; }
       html, body, #root { height: auto !important; min-height: 0 !important; }
       body { background: #ffffff !important; color: #16111a !important; overflow: visible !important; }
       .bg-wrap, .no-print { display: none !important; }
       .scroll-root { display: block !important; padding: 0 !important; min-height: 0 !important; }
-      .psh { display: flex !important; flex-direction: column; min-height: 273mm; }
+      .psh { display: block !important; }
       .psh-draw { break-inside: avoid; page-break-inside: avoid; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
@@ -265,72 +281,71 @@
 
     .psh-head {
       display: flex; align-items: flex-end; justify-content: space-between;
-      border-bottom: 2.5px solid #9A0D37; padding-bottom: 9px; margin-bottom: 13px;
+      border-bottom: 2px solid #9A0D37; padding-bottom: 6px; margin-bottom: 9px;
     }
-    .psh-title { font-size: 22px; font-weight: 800; color: #9A0D37; line-height: 1.15; }
-    .psh-title span { display: block; font-size: 11px; font-weight: 400; color: #4f434a;
+    .psh-title { font-size: 19px; font-weight: 800; color: #9A0D37; line-height: 1.15; }
+    .psh-title span { display: block; font-size: 10px; font-weight: 400; color: #4f434a;
       font-family: 'Zain', sans-serif; letter-spacing: 1.6px; direction: ltr; text-align: right; margin-top: 2px; }
-    .psh-brand { font-size: 25px; font-weight: 800; letter-spacing: 4px; direction: ltr; white-space: nowrap; }
+    .psh-brand { font-size: 21px; font-weight: 800; letter-spacing: 4px; direction: ltr; white-space: nowrap; }
     .psh-brand .w { color: #9A0D37; }
     .psh-brand .s { color: #16111a; }
-    .psh-brand small { display: block; font-size: 8.5px; font-weight: 400; letter-spacing: 2.6px;
+    .psh-brand small { display: block; font-size: 8px; font-weight: 400; letter-spacing: 2.6px;
       color: #5d525a; text-align: center; margin-top: 1px; }
 
     .psh-info {
       display: grid; grid-template-columns: repeat(3, 1fr);
-      border: 1px solid #c9adb8; border-radius: 7px; overflow: hidden; margin-bottom: 13px;
+      border: 1px solid #c9adb8; border-radius: 6px; overflow: hidden; margin-bottom: 9px;
     }
-    .psh-cell { padding: 6px 11px 7px; border-left: 1px solid #dcc7d0; border-bottom: 1px solid #dcc7d0; }
+    .psh-cell { padding: 4px 9px 5px; border-left: 1px solid #dcc7d0; border-bottom: 1px solid #dcc7d0; }
     .psh-cell:nth-child(3n) { border-left: none; }
-    .psh-lbl { font-size: 10.5px; color: #4f434a; line-height: 1.3; }
-    .psh-val { font-size: 14.5px; font-weight: 700; line-height: 1.35; }
+    .psh-lbl { font-size: 9.5px; color: #4f434a; line-height: 1.3; }
+    .psh-val { font-size: 13px; font-weight: 700; line-height: 1.3; }
     .psh-val i { font-style: normal; direction: ltr; display: inline-block; }
 
-    .psh-sec { font-size: 12px; font-weight: 700; color: #9A0D37; margin: 0 0 6px 0; }
+    .psh-sec { font-size: 11px; font-weight: 700; color: #9A0D37; margin: 0 0 4px 0; }
 
-    .psh-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .psh-table thead th { background: #9A0D37; color: #fff; padding: 7px 10px; font-weight: 700; font-size: 12.5px; }
+    .psh-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+    .psh-table thead th { background: #9A0D37; color: #fff; padding: 5px 9px; font-weight: 700; font-size: 11px; }
     .psh-table thead th:first-child { border-radius: 0 6px 0 0; }
     .psh-table thead th:last-child  { border-radius: 6px 0 0 0; }
-    .psh-table td { padding: 6px 10px; border-bottom: 1px solid #dcc7d0; color: #16111a; }
+    .psh-table td { padding: 3.5px 9px; border-bottom: 1px solid #dcc7d0; color: #16111a; }
     .psh-table tbody tr:nth-child(even) { background: #f6e9ee; }
     .psh-nm { font-weight: 700; }
-    .psh-nm em { font-style: normal; font-size: 11px; color: #4f434a; direction: ltr; display: inline-block; margin-right: 5px; }
-    .psh-num { direction: ltr; text-align: center; font-weight: 800; font-size: 14.5px; }
+    .psh-nm em { font-style: normal; font-size: 10px; color: #4f434a; direction: ltr; display: inline-block; margin-right: 5px; }
+    .psh-num { direction: ltr; text-align: center; font-weight: 800; font-size: 13px; }
     .psh-qty { direction: ltr; text-align: center; font-weight: 700; }
-    .psh-qty b { font-size: 14.5px; }
-    .psh-qty i { font-style: normal; font-size: 10px; color: #4f434a; display: block; }
-    .psh-code { direction: ltr; text-align: center; color: #4f434a; font-size: 12px; }
+    .psh-qty b { font-size: 13px; }
+    .psh-qty i { font-style: normal; font-size: 9px; color: #4f434a; display: block; }
+    .psh-code { direction: ltr; text-align: center; color: #4f434a; font-size: 10.5px; }
 
-    .psh-cadir { margin-top: 13px; border: 1px solid #c09fae; border-radius: 8px; overflow: hidden; }
-    .psh-cadir-h { background: #f4dfe7; color: #9A0D37; font-weight: 700; font-size: 12.5px;
-      padding: 6px 12px; border-bottom: 1px solid #d9bcc8; }
+    .psh-cadir { margin-top: 9px; border: 1px solid #c09fae; border-radius: 7px; overflow: hidden; }
+    .psh-cadir-h { background: #f4dfe7; color: #9A0D37; font-weight: 700; font-size: 11px;
+      padding: 4px 10px; border-bottom: 1px solid #d9bcc8; }
     .psh-cadir-g { display: grid; grid-template-columns: repeat(4, 1fr); }
-    .psh-cadir-g > div { padding: 8px 10px; border-left: 1px solid #dcc7d0; text-align: center; }
+    .psh-cadir-g > div { padding: 5px 9px; border-left: 1px solid #dcc7d0; text-align: center; }
     .psh-cadir-g > div:last-child { border-left: none; }
     .psh-cadir-g .psh-lbl { margin-bottom: 1px; }
-    .psh-cadir-g .psh-val { font-size: 17px; direction: ltr; }
-    .psh-cadir-g .psh-val u { text-decoration: none; font-size: 10px; color: #4f434a; font-weight: 400; }
+    .psh-cadir-g .psh-val { font-size: 15px; direction: ltr; }
+    .psh-cadir-g .psh-val u { text-decoration: none; font-size: 9px; color: #4f434a; font-weight: 400; }
 
-    .psh-note { margin-top: 9px; font-size: 10.5px; color: #4f434a; line-height: 1.5; }
+    .psh-note { margin-top: 7px; font-size: 9.5px; color: #4f434a; line-height: 1.45; }
 
     /* شوێنی بەتاڵ بۆ کێشانی نەخشە و نووسینی تێبینی بە دەست */
     .psh-draw {
-      margin-top: 13px; border: 1px solid #c09fae; border-radius: 8px;
+      margin-top: 9px; border: 1px solid #c09fae; border-radius: 7px;
       display: flex; flex-direction: column; overflow: hidden;
-      min-height: 46mm;
     }
     .psh-draw-h {
-      background: #f4dfe7; color: #9A0D37; font-weight: 700; font-size: 12.5px;
-      padding: 6px 12px; border-bottom: 1px solid #d9bcc8; flex: 0 0 auto;
+      background: #f4dfe7; color: #9A0D37; font-weight: 700; font-size: 11px;
+      padding: 4px 10px; border-bottom: 1px solid #d9bcc8; flex: 0 0 auto;
     }
-    .psh-draw-b { flex: 1 1 auto; }
+    .psh-draw-b { flex: 1 1 auto; min-height: 80mm; }
 
     .psh-sign { display: grid; grid-template-columns: 1fr 1fr; gap: 46px; margin-top: 18px; }
     .psh-sign div { border-top: 1px solid #a8949e; padding-top: 5px; font-size: 11px; color: #4f434a; text-align: center; }
 
-    .psh-foot { margin-top: 14px; padding-top: 8px; border-top: 1px solid #dcc7d0;
-      display: flex; justify-content: space-between; font-size: 9.5px; color: #6b5f66; letter-spacing: 0.6px; }
+    .psh-foot { margin-top: 8px; padding-top: 6px; border-top: 1px solid #dcc7d0;
+      display: flex; justify-content: space-between; font-size: 8.5px; color: #6b5f66; letter-spacing: 0.6px; }
 
     input[type=number]::-webkit-outer-spin-button,
     input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
@@ -1623,6 +1638,156 @@ function Divider() {
   });
 }
 
+
+// ─── DROSTKARÎ PDF ────────────────────────────────────────────────────────
+// پەڕەی پرینت وەک وێنەیەکی ڕوون ڕەندەر دەکات و دەیخاتە ناو فایلێکی A4 ی PDF.
+// بەبێ هیچ کتێبخانەیەکی دەرەکی؛ فۆنتەکانیش دەخرێنە ناو وێنەکەوە بۆ ئەوەی
+// نووسینی کوردی هەر وەک پەڕەکە دەربکەوێت.
+const PDF_FONT_FILES = [
+  ["fonts/zain-arabic-400-normal.woff2", 400, true],
+  ["fonts/zain-latin-400-normal.woff2", 400, false],
+  ["fonts/zain-arabic-700-normal.woff2", 700, true],
+  ["fonts/zain-latin-700-normal.woff2", 700, false],
+  ["fonts/zain-arabic-800-normal.woff2", 800, true],
+  ["fonts/zain-latin-800-normal.woff2", 800, false]
+];
+const ARABIC_RANGE = "U+0600-06FF,U+0750-077F,U+0870-088E,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F";
+let _fontCss = null;
+
+function bytesToBase64(buf) {
+  const bytes = new Uint8Array(buf);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  }
+  return btoa(bin);
+}
+
+async function inlineFontCss() {
+  if (_fontCss) return _fontCss;
+  const parts = await Promise.all(PDF_FONT_FILES.map(async ([url, weight, arabic]) => {
+    const buf = await (await fetch(url)).arrayBuffer();
+    return "@font-face{font-family:'Zain';font-style:normal;font-weight:" + weight +
+      ";src:url(data:font/woff2;base64," + bytesToBase64(buf) + ") format('woff2');" +
+      (arabic ? "unicode-range:" + ARABIC_RANGE + ";" : "") + "}";
+  }));
+  _fontCss = parts.join("");
+  return _fontCss;
+}
+
+// وێنەیەکی JPEG دەکات بە فایلێکی PDF ی A4 بە هەمان مارجینی پەڕەی پرینت
+function jpegToPdfBlob(jpegBase64, pxW, pxH) {
+  const raw = atob(jpegBase64);
+  const A4W = 595.276, A4H = 841.89;
+  const mx = 9 * 72 / 25.4, my = 7 * 72 / 25.4;
+  let drawW = A4W - 2 * mx;
+  let drawH = drawW * pxH / pxW;
+  const maxH = A4H - 2 * my;
+  if (drawH > maxH) { drawW = drawW * maxH / drawH; drawH = maxH; }
+  const x = (A4W - drawW) / 2;
+  const y = A4H - my - drawH;
+  const content = "q " + drawW.toFixed(2) + " 0 0 " + drawH.toFixed(2) + " " +
+    x.toFixed(2) + " " + y.toFixed(2) + " cm /Im0 Do Q";
+  const objs = [
+    null,
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + A4W + " " + A4H +
+      "] /Resources << /XObject << /Im0 5 0 R >> /ProcSet [/PDF /ImageC] >> /Contents 4 0 R >>",
+    "<< /Length " + content.length + " >>\nstream\n" + content + "\nendstream",
+    "<< /Type /XObject /Subtype /Image /Width " + pxW + " /Height " + pxH +
+      " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " +
+      raw.length + " >>\nstream\n" + raw + "\nendstream"
+  ];
+  let out = "%PDF-1.4\n";
+  const offsets = [];
+  for (let i = 1; i < objs.length; i++) {
+    offsets[i] = out.length;
+    out += i + " 0 obj\n" + objs[i] + "\nendobj\n";
+  }
+  const xref = out.length;
+  out += "xref\n0 " + objs.length + "\n0000000000 65535 f \n";
+  for (let i = 1; i < objs.length; i++) {
+    out += ("0000000000" + offsets[i]).slice(-10) + " 00000 n \n";
+  }
+  out += "trailer\n<< /Size " + objs.length + " /Root 1 0 R >>\nstartxref\n" + xref + "\n%%EOF";
+  const bytes = new Uint8Array(out.length);
+  for (let i = 0; i < out.length; i++) bytes[i] = out.charCodeAt(i) & 0xff;
+  return new Blob([bytes], { type: "application/pdf" });
+}
+
+async function buildSheetPdfBlob() {
+  const sheet = document.querySelector(".psh");
+  if (!sheet) throw new Error("پەڕەی پرینت نەدۆزرایەوە");
+  const W = Math.round(192 * 96 / 25.4);   // ٢١٠mm کەم ٩mm مارجین لای هەردوولا
+  const SCALE = 3;
+
+  // @font-face ەکانی سایتەکە ڕێڕەوی فایلیان تێدایە کە لەناو SVG ەکەدا
+  // نادۆزرێنەوە، بۆیە لایان دەبەین و خۆمان فۆنتەکە دادەنێین.
+  const pageCss = Array.from(document.querySelectorAll("style"))
+    .map(el => el.textContent).join("\n")
+    .replace(/@font-face\s*\{[^}]*\}/g, "");
+
+  const host = document.createElement("div");
+  host.setAttribute("style",
+    "position:fixed;left:-10000px;top:0;width:" + W + "px;background:#fff;");
+  const clone = sheet.cloneNode(true);
+  clone.style.display = "block";
+  host.appendChild(clone);
+  document.body.appendChild(host);
+  if (document.fonts && document.fonts.ready) await document.fonts.ready;
+  const H = Math.ceil(clone.getBoundingClientRect().height);
+  const markup = new XMLSerializer().serializeToString(clone);
+  document.body.removeChild(host);
+
+  // وێنەکە دەکێشێت و دەڵێت چەند پیکسەلی تۆخی تێدایە — بەوە دەزانین
+  // ئایا نووسینەکان دەرکەوتوون یان نا.
+  const render = async fontCss => {
+    const svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '">' +
+      '<foreignObject x="0" y="0" width="' + W + '" height="' + H + '">' +
+      '<div xmlns="http://www.w3.org/1999/xhtml" style="width:' + W +
+      'px;background:#fff"><style><![CDATA[' + pageCss + fontCss +
+      '.psh{display:block !important}]]></style>' + markup + '</div>' +
+      '</foreignObject></svg>';
+    const img = new Image();
+    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    if (img.decode) await img.decode();
+    else await new Promise((ok, no) => { img.onload = ok; img.onerror = no; });
+    const canvas = document.createElement("canvas");
+    canvas.width = W * SCALE;
+    canvas.height = H * SCALE;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const px = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    let dark = 0;
+    for (let k = 0; k < px.length; k += 64) {          // نموونەیەک لە هەر ١٦ پیکسەل
+      if (px[k] < 90 && px[k + 1] < 90 && px[k + 2] < 90) dark++;
+    }
+    return { canvas, darkRatio: dark / (px.length / 64) };
+  };
+
+  // فۆنتی خۆمان لە یەکەم هەوڵدا؛ هەندێک وێبگەڕ فۆنت لەناو SVG دا بار ناکەن و
+  // ئەوسا نووسینەکان ون دەبن، بۆیە بێ فۆنت دووبارە دەیکەینەوە.
+  const MIN_INK = 0.0015;
+  let shot = null;
+  try {
+    shot = await render(await inlineFontCss());
+    if (shot.darkRatio < MIN_INK) shot = null;
+  } catch (e) {
+    shot = null;
+  }
+  if (!shot) shot = await render("");
+  if (shot.darkRatio < MIN_INK) throw new Error("نووسینەکان ڕەندەر نەبوون");
+
+  const dataUrl = shot.canvas.toDataURL("image/jpeg", 0.94);
+  if (dataUrl.indexOf("data:image/jpeg") !== 0) throw new Error("وێنەکە دروست نەبوو");
+  return jpegToPdfBlob(dataUrl.slice(dataUrl.indexOf(",") + 1),
+                       shot.canvas.width, shot.canvas.height);
+}
+
 // ─── MAIN APP ─────────────────────────────────────────────────────────────
 function App() {
   const [system, setSystem] = useState("70");
@@ -1635,15 +1800,38 @@ function App() {
   const [sysCount, setSysCount] = useState("1");
   const [result, setResult] = useState(null);
   const today = new Date().toLocaleDateString("tr-TR");
-  // ناوی فایلی PDF لە زانیاری کریارەکەوە دروست دەکات، پاشان دیالۆگی پاشەکەوت دەکاتەوە
-  const savePdf = () => {
-    const prevTitle = document.title;
+  const [pdfBusy, setPdfBusy] = useState(false);
+  // ناوی فایلەکە لە زانیاری کریارەکەوە دروست دەکات
+  const pdfName = () => {
     const clean = v => String(v || "").trim().replace(/[\\/:*?"<>|]+/g, "-");
-    const name = clean(customer) || "WLAT-SHADE";
     const size = cephe && acilim ? `_${clean(cephe)}x${clean(acilim)}` : "";
-    document.title = `${name}_RAY${clean(system)}${size}_${clean(today).replace(/\./g, "-")}`;
-    window.print();
-    setTimeout(() => { document.title = prevTitle; }, 1000);
+    return `${clean(customer) || "WLAT-SHADE"}_RAY${clean(system)}${size}_${clean(today).replace(/\./g, "-")}`;
+  };
+  // فایلی PDF دروست دەکات و ڕاستەوخۆ دایدەگرێت. ئەگەر وێبگەڕەکە نەیتوانی،
+  // دەکەوێتەوە سەر دیالۆگی پرینتی خۆی بۆ ئەوەی بەهەر حاڵ کارەکە بکرێت.
+  const savePdf = async () => {
+    if (pdfBusy) return;
+    setPdfBusy(true);
+    try {
+      const blob = await buildSheetPdfBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = pdfName() + ".pdf";
+      a.rel = "noopener";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 8000);
+    } catch (err) {
+      console.error("PDF:", err);
+      const prevTitle = document.title;
+      document.title = pdfName();
+      window.print();
+      setTimeout(() => { document.title = prevTitle; }, 1000);
+    } finally {
+      setPdfBusy(false);
+    }
   };
   const handleCalc = () => {
     const r = calculate({
@@ -1826,8 +2014,6 @@ function App() {
   }, "نەخشە و تێبینی / Çizim & Not"), /*#__PURE__*/React.createElement("div", {
     className: "psh-draw-b"
   })), /*#__PURE__*/React.createElement("div", {
-    className: "psh-sign"
-  }, /*#__PURE__*/React.createElement("div", null, "واژووی بەرهەمهێنەر / Üretim"), /*#__PURE__*/React.createElement("div", null, "واژووی پشکنین / Kontrol")), /*#__PURE__*/React.createElement("div", {
     className: "psh-foot"
   }, /*#__PURE__*/React.createElement("span", null, "WLAT SHADE — Pergola Kesim Sistemi"), /*#__PURE__*/React.createElement("span", null, today)));
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
@@ -2039,7 +2225,9 @@ function App() {
     }
   }, /*#__PURE__*/React.createElement("button", {
     className: "pbtn",
-    onClick: savePdf
+    onClick: savePdf,
+    disabled: pdfBusy,
+    style: pdfBusy ? { opacity: 0.55 } : null
   }, /*#__PURE__*/React.createElement("svg", {
     width: "13",
     height: "13",
@@ -2063,7 +2251,7 @@ function App() {
     strokeLinejoin: "round"
   })), /*#__PURE__*/React.createElement("span", {
     className: "ku"
-  }, "پاشەکەوت"), /*#__PURE__*/React.createElement("span", {
+  }, pdfBusy ? "خەریکە…" : "پاشەکەوت"), /*#__PURE__*/React.createElement("span", {
     className: "lat"
   }, "/ PDF")), /*#__PURE__*/React.createElement("button", {
     className: "pbtn",
