@@ -254,7 +254,10 @@
       padding: 34px 38px; border-radius: 3px; margin: 0 auto;
       box-shadow: 0 6px 26px rgba(0,0,0,0.45);
     }
-    .psh-on { display: block !important; }
+    .psh-on, .psh-metrics {
+      display: flex !important; flex-direction: column;
+      width: 192mm; min-height: 265mm;
+    }
     @media print { .pvw { display: none !important; } }
 
     /* ══════════ PRINT SHEET ══════════ */
@@ -266,7 +269,10 @@
       body { background: #ffffff !important; color: #16111a !important; overflow: visible !important; }
       .bg-wrap, .no-print { display: none !important; }
       .scroll-root { display: block !important; padding: 0 !important; min-height: 0 !important; }
-      .psh { display: block !important; width: 192mm; }
+      .psh {
+        display: flex !important; flex-direction: column;
+        width: 192mm; min-height: 265mm;
+      }
       .psh-draw { break-inside: avoid; page-break-inside: avoid; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
@@ -332,13 +338,13 @@
     /* شوێنی بەتاڵ بۆ کێشانی نەخشە و نووسینی تێبینی بە دەست */
     /* لاکێشەیەکی بەتاڵ لە دەستە چەپ — بۆ کێشانی نەخشە بە دەست دوای پرینت */
     .psh-draw-wrap { display: flex; justify-content: flex-start; direction: ltr;
-      margin-top: 12px; padding: 0 0 5mm 16mm; }
+      margin-top: 8mm; padding: 0 0 4mm 16mm; }
     .psh-draw { width: 58mm; height: 92mm; border: 1px solid #7d6a72; border-radius: 2px; }
 
     .psh-sign { display: grid; grid-template-columns: 1fr 1fr; gap: 46px; margin-top: 18px; }
     .psh-sign div { border-top: 1px solid #a8949e; padding-top: 5px; font-size: 11px; color: #4f434a; text-align: center; }
 
-    .psh-foot { margin-top: 8px; padding-top: 6px; border-top: 1px solid #dcc7d0;
+    .psh-foot { margin-top: auto; padding-top: 6px; border-top: 1px solid #dcc7d0;
       display: flex; justify-content: space-between; font-size: 8.5px; color: #6b5f66; letter-spacing: 0.6px; }
 
     input[type=number]::-webkit-outer-spin-button,
@@ -1726,7 +1732,7 @@ async function buildSheetPdfBlob() {
   host.setAttribute("style",
     "position:fixed;left:-10000px;top:0;width:" + W + "px;background:#fff;");
   const clone = sheet.cloneNode(true);
-  clone.style.display = "block";
+  clone.classList.add("psh-metrics");
   host.appendChild(clone);
   document.body.appendChild(host);
   if (document.fonts && document.fonts.ready) await document.fonts.ready;
