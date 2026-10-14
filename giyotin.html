@@ -133,6 +133,12 @@
   .gbox .v { direction: ltr; text-align: right; font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: .5px; }
   .gbox .v b { color: var(--accent-hi); font-weight: 800; }
   .gbox .x { direction: ltr; text-align: right; font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  .gdl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 4px 0 2px; }
+  .gdl div { background: rgba(255,255,255,0.04); border-radius: 10px; padding: 6px 8px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .gdl dt { font-size: 11px; color: var(--muted); line-height: 1.25; }
+  .gdl dt i { font-style: normal; font-family: var(--xl-font); font-size: 9px; letter-spacing: .5px; display: block; direction: ltr; text-align: right; }
+  .gdl dd { margin: 0; direction: ltr; text-align: right; font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .gdl div.q dd { color: var(--accent-hi); }
 
   .warn { border: 1px solid var(--warn-line); background: var(--warn-bg); color: var(--warn); border-radius: 12px; padding: 10px 13px; font-size: 14px; }
   .warn b { font-family: var(--xl-font); font-size: 11px; letter-spacing: .6px; direction: ltr; display: inline-block; }
@@ -148,14 +154,19 @@
   .btn.ghost:hover { color: var(--text); border-color: var(--faint); }
   .btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: .5; cursor: progress; }
 
   /* پێشبینینی پەڕەکان لەسەر شاشە */
   .pv { border-radius: 16px; overflow: hidden; border: 1px solid var(--panel-line); background: #5d5760; }
   .pv-bar { display: flex; justify-content: space-between; gap: 8px; padding: 8px 13px; background: rgba(154,13,55,0.18); font-size: 12px; color: var(--muted); }
   .pv-bar i { font-style: normal; direction: ltr; font-family: var(--xl-font); font-size: 10px; letter-spacing: 1px; }
   .pv-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
-  .pv-slot { position: relative; width: 100%; overflow: hidden; }
-  .pv-slot > .page { position: absolute; top: 0; left: 0; transform-origin: top left; box-shadow: 0 6px 24px rgba(0,0,0,0.45); }
+  .pv-bar button { background: none; border: 1px solid rgba(255,255,255,0.18); color: var(--text); border-radius: 8px; padding: 2px 10px; font: inherit; font-size: 12px; cursor: pointer; }
+  .pv-bar button:focus-visible { outline: 2px solid #fff; }
+  .pv-slot { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; direction: ltr; }
+  .pv-sizer { position: relative; cursor: zoom-in; }
+  .pv.zoom .pv-sizer { cursor: zoom-out; }
+  .pv-sizer > .page { position: absolute; top: 0; left: 0; transform-origin: top left; box-shadow: 0 6px 24px rgba(0,0,0,0.45); }
   .empty { padding: 34px 16px; text-align: center; color: rgba(255,255,255,0.75); font-size: 14px; }
 
   /* ═════════ پەڕەی A4 (وەک ئێکسڵەکە) ═════════ */
@@ -296,12 +307,13 @@
     <div class="note" id="printNote"></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button type="button" class="btn ghost" id="reset">پاککردنەوە</button>
-      <button type="button" class="btn site-only" id="printBtn">پرینت / PDF</button>
+      <button type="button" class="btn ghost site-only" id="printBtn">پرینت</button>
+      <button type="button" class="btn site-only" id="pdfBtn">داگرتنی PDF</button>
     </div>
   </div>
 
   <section class="pv" aria-label="پێشبینینی پەڕەکان">
-    <div class="pv-bar"><span>پێشبینینی پرینت — ٢ پەڕەی A4</span><i>ÜRETİM KAĞIDI</i></div>
+    <div class="pv-bar"><span>پێشبینینی پرینت — ٢ پەڕەی A4</span><button type="button" id="zoomBtn">گەورەکردن</button></div>
     <div class="pv-body" id="pv"></div>
   </section>
 </main>
@@ -664,7 +676,7 @@ function giyotinCalc(inp) {
   // ── دروستکردنی پەڕەکان ──
   function stamp() {
     const d = new Date(), p = (n) => String(n).padStart(2, "0");
-    return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+    return `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
   }
   const hl = (tr, ku, col, row, extra = "") => `<div class="c hl" style="grid-column:${col};grid-row:${row};${extra}">${tr}${ku ? `<span class="ku">${ku}</span>` : ""}</div>`;
   const hv = (val, col, row, cls = "") => `<div class="c hv ${cls}" style="grid-column:${col};grid-row:${row}">${esc(val)}</div>`;
@@ -747,14 +759,26 @@ function giyotinCalc(inp) {
 
   // ── پێشبینین: پەڕەکان بچووک دەکرێنەوە بۆ پانی شاشە ──
   const PAGE_W = 297 * 96 / 25.4, PAGE_H = 210 * 96 / 25.4;
+  let zoom = false;
   function fit() {
     document.querySelectorAll(".pv-slot").forEach((slot) => {
-      const k = slot.clientWidth / PAGE_W;
-      slot.style.height = `${PAGE_H * k}px`;
-      slot.firstElementChild.style.transform = `scale(${k})`;
+      const k0 = slot.clientWidth / PAGE_W;
+      const k = zoom ? Math.max(k0, 0.85) : k0;
+      const sz = slot.firstElementChild;
+      sz.style.width = `${PAGE_W * k}px`;
+      sz.style.height = `${PAGE_H * k}px`;
+      sz.firstElementChild.style.transform = `scale(${k})`;
     });
   }
   window.addEventListener("resize", fit);
+  function setZoom(z) {
+    zoom = z;
+    document.querySelector(".pv").classList.toggle("zoom", zoom);
+    $("zoomBtn").textContent = zoom ? "بچووککردنەوە" : "گەورەکردن";
+    fit();
+  }
+  $("zoomBtn").addEventListener("click", () => setZoom(!zoom));
+  $("pv").addEventListener("click", (e) => { if (e.target.closest(".pv-sizer")) setZoom(!zoom); });
 
   function update() {
     save();
@@ -778,9 +802,11 @@ function giyotinCalc(inp) {
 
     // قیاسی شووشە (GİRİŞ H9 × J9 ، H10 × J10)
     if (ready) {
-      const box = (title, a, b, q) => `<div class="gbox"><span class="k">${title}</span>` +
-        `<span class="v">${fmt0(a)} × ${fmt0(b)} <b>— ${fmtGen(q)} دانە</b></span>` +
-        `<span class="x">${fmtGen(a)} × ${fmtGen(b)} mm — ${fmtGen(q)} ADET</span></div>`;
+      const box = (title, a, b, q) => `<div class="gbox"><span class="k">${title}</span><dl class="gdl">` +
+        `<div><dt>پانی<i>EN</i></dt><dd>${fmt0(a)}</dd></div>` +
+        `<div><dt>درێژی<i>UZUNLUK</i></dt><dd>${fmt0(b)}</dd></div>` +
+        `<div class="q"><dt>ژمارە<i>ADET</i></dt><dd>${fmtGen(q)}</dd></div></dl>` +
+        `<span class="x">${fmtGen(a)} × ${fmtGen(b)} mm</span></div>`;
       let g = box("شووشەی سەرەوە / CAM", G.H9, G.J9, G.K9);
       if (S.B8 >= 3) g += box("شووشەی خوارەوە / ALT CAM", G.H10, G.J10, G.K10);
       g += `<div class="gbox"><span class="k">ڕووبەری شووشە / CAM m²</span><span class="v">${fmt2(U.M8)} <b>m²</b></span><span class="x">${esc(U.L4.trim())}</span></div>`;
@@ -792,18 +818,134 @@ function giyotinCalc(inp) {
     // پەڕەکان
     if (ready) {
       const p1 = page1(U, G), p2 = page2(U, G);
-      $("pv").innerHTML = `<div class="pv-slot">${p1}</div><div class="pv-slot">${p2}</div>`;
+      $("pv").innerHTML = `<div class="pv-slot"><div class="pv-sizer">${p1}</div></div><div class="pv-slot"><div class="pv-sizer">${p2}</div></div>`;
       $("print-root").innerHTML = p1 + p2;
       fit();
     } else {
       $("pv").innerHTML = `<div class="empty">کاتێک پانی و بەرزی بنووسیت، هەردوو پەڕەکە لێرە دەردەکەون.</div>`;
       $("print-root").innerHTML = "";
     }
-    const pb = $("printBtn"); if (pb) pb.disabled = !ready;
+    ["printBtn", "pdfBtn"].forEach((id) => { const b = $(id); if (b && !pdfBusy) b.disabled = !ready; });
   }
 
   $("reset").addEventListener("click", () => { S = { ...DEF, D5: "", D6: "" }; syncForm(); update(); $("D2").focus(); });
-  $("printBtn").addEventListener("click", () => { update(); window.print(); });
+  const pdfName = () => {
+    const clean = (v) => String(v || "").trim().replace(/[\\/:*?"<>|]+/g, "-");
+    const d = new Date(), p = (n) => String(n).padStart(2, "0");
+    return `${clean(S.D2) || "WLAT-SHADE"}_GIYOTIN_${clean(S.D5)}x${clean(S.D6)}_${p(d.getDate())}-${p(d.getMonth() + 1)}-${d.getFullYear()}`;
+  };
+  const doPrint = () => {
+    update();
+    const prev = document.title;
+    document.title = pdfName();
+    window.print();
+    setTimeout(() => { document.title = prev; }, 1000);
+  };
+  let pdfBusy = false;
+  $("printBtn").addEventListener("click", doPrint);
+  $("pdfBtn").addEventListener("click", async () => {
+    if (pdfBusy) return;
+    pdfBusy = true;
+    const btn = $("pdfBtn"), label = btn.textContent;
+    btn.disabled = true; btn.textContent = "چاوەڕێ بکە…";
+    try {
+      update();
+      const blob = await buildPdf();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = pdfName() + ".pdf"; a.rel = "noopener";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    } catch (err) {
+      console.error("PDF:", err);
+      doPrint();
+    } finally {
+      pdfBusy = false; btn.disabled = false; btn.textContent = label;
+    }
+  });
+
+  // ── PDF بەبێ کتێبخانە (هەمان ڕێگای حیسابکەری پەرگۆلا): هەر پەڕەیەک دەبێتە
+  //    وێنەیەکی JPEG و دەخرێتە ناو پەڕەیەکی A4 ی ئاسۆیی ──
+  const b64 = (buf) => {
+    const bytes = new Uint8Array(buf); let bin = "";
+    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(bin);
+  };
+  const ARABIC = "U+0600-06FF,U+0750-077F,U+0870-088E,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F";
+  let fontCss = null;
+  async function inlineFonts() {
+    if (fontCss !== null) return fontCss;
+    const files = [["fonts/zain-arabic-700-normal.woff2", 700, 1], ["fonts/zain-latin-700-normal.woff2", 700, 0],
+                   ["fonts/zain-arabic-400-normal.woff2", 400, 1], ["fonts/zain-latin-400-normal.woff2", 400, 0]];
+    const parts = await Promise.all(files.map(async ([u, w, ar]) => {
+      const buf = await (await fetch(u)).arrayBuffer();
+      return `@font-face{font-family:'Zain';font-weight:${w};src:url(data:font/woff2;base64,${b64(buf)}) format('woff2');${ar ? `unicode-range:${ARABIC};` : ""}}`;
+    }));
+    fontCss = parts.join("");
+    return fontCss;
+  }
+  const imgCache = {};
+  async function dataUrl(src) {
+    if (!imgCache[src]) {
+      imgCache[src] = fetch(src).then((r) => r.arrayBuffer()).then((buf) => `data:image/webp;base64,${b64(buf)}`);
+    }
+    return imgCache[src];
+  }
+  async function pageJpeg(pageEl, css, SCALE) {
+    const W = Math.round(PAGE_W), H = Math.round(PAGE_H);
+    const clone = pageEl.cloneNode(true);
+    clone.style.transform = "none";
+    await Promise.all([...clone.querySelectorAll("img")].map(async (im) => { im.setAttribute("src", await dataUrl(im.getAttribute("src"))); }));
+    const markup = new XMLSerializer().serializeToString(clone);
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><foreignObject x="0" y="0" width="${W}" height="${H}">` +
+      `<div xmlns="http://www.w3.org/1999/xhtml" style="width:${W}px;height:${H}px;background:#fff"><style><![CDATA[${css}]]></style>${markup}</div></foreignObject></svg>`;
+    const img = new Image();
+    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    if (img.decode) await img.decode(); else await new Promise((ok, no) => { img.onload = ok; img.onerror = no; });
+    const c = document.createElement("canvas");
+    c.width = W * SCALE; c.height = H * SCALE;
+    const ctx = c.getContext("2d");
+    ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height);
+    ctx.drawImage(img, 0, 0, c.width, c.height);
+    const url = c.toDataURL("image/jpeg", 0.92);
+    if (url.indexOf("data:image/jpeg") !== 0) throw new Error("JPEG");
+    return { data: atob(url.slice(url.indexOf(",") + 1)), w: c.width, h: c.height };
+  }
+  function jpegsToPdf(pages) {
+    const PW = 841.89, PH = 595.276;
+    const objs = [null, "<< /Type /Catalog /Pages 2 0 R >>", null];
+    const kids = [];
+    pages.forEach((pg, i) => {
+      const pageId = 3 + i * 3, contId = pageId + 1, imgId = pageId + 2;
+      kids.push(`${pageId} 0 R`);
+      const content = `q ${PW} 0 0 ${PH} 0 0 cm /Im0 Do Q`;
+      objs[pageId] = `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PW} ${PH}] /Resources << /XObject << /Im0 ${imgId} 0 R >> /ProcSet [/PDF /ImageC] >> /Contents ${contId} 0 R >>`;
+      objs[contId] = `<< /Length ${content.length} >>\nstream\n${content}\nendstream`;
+      objs[imgId] = `<< /Type /XObject /Subtype /Image /Width ${pg.w} /Height ${pg.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${pg.data.length} >>\nstream\n${pg.data}\nendstream`;
+    });
+    objs[2] = `<< /Type /Pages /Kids [${kids.join(" ")}] /Count ${pages.length} >>`;
+    let out = "%PDF-1.4\n";
+    const off = [];
+    for (let i = 1; i < objs.length; i++) { off[i] = out.length; out += `${i} 0 obj\n${objs[i]}\nendobj\n`; }
+    const xref = out.length;
+    out += `xref\n0 ${objs.length}\n0000000000 65535 f \n`;
+    for (let i = 1; i < objs.length; i++) out += ("0000000000" + off[i]).slice(-10) + " 00000 n \n";
+    out += `trailer\n<< /Size ${objs.length} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+    const bytes = new Uint8Array(out.length);
+    for (let i = 0; i < out.length; i++) bytes[i] = out.charCodeAt(i) & 0xff;
+    return new Blob([bytes], { type: "application/pdf" });
+  }
+  async function buildPdf() {
+    const pages = [...$("print-root").querySelectorAll(".page")];
+    if (!pages.length) throw new Error("no pages");
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    const css = [...document.querySelectorAll("style")].map((el) => el.textContent).join("\n").replace(/@font-face\s*\{[^}]*\}/g, "");
+    let fonts = "";
+    try { fonts = await inlineFonts(); } catch (e) { fonts = ""; }
+    const shots = [];
+    for (const pg of pages) shots.push(await pageJpeg(pg, css + fonts, 2.5));
+    return jpegsToPdf(shots);
+  }
 
   if (PREVIEW) {
     document.querySelectorAll(".site-only").forEach((el) => el.remove());
